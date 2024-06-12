@@ -1,0 +1,50 @@
+<template>
+    <div class="slds-card">
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-m-bottom_medium">
+                <lightning-input
+                    label="Search by First Name"
+                    type="search"
+                    onchange={handleSearchKeyChange}
+                    value={searchKey}
+                    variant="label-hidden"
+                    placeholder="Search..."
+                ></lightning-input>
+            </div>
+
+            <template if:true={error}>
+                <div class="slds-text-color_error slds-m-bottom_medium">
+                    An error occurred while retrieving contacts: {error.body.message}
+                </div>
+            </template>
+            <template if:false={error}>
+                <div style="height: 360px;">
+                    <lightning-datatable
+                        key-field="Id"
+                        data={filteredContacts}
+                        columns={columns}
+                        hide-checkbox-column="true"
+                        hide-table-header="true"
+                        onrowaction={handlePhoneClick}
+                        class="slds-table_bordered slds-table_cell-buffer"
+                    >
+                    </lightning-datatable>
+                </div>
+                <template if:false={filteredContacts.length}>
+                    <div class="slds-text-align_center slds-m-vertical_medium">
+                        No contacts found.
+                    </div>
+                </template>
+            </template>
+        </div>
+        <template for:each={filteredContacts} for:item="contact">
+            <lightning-click-to-dial
+                key={contact.Id}
+                value={contact.Phone}
+                record-id={contact.Id}
+                data-id={contact.Id}
+                hidden
+            ></lightning-click-to-dial>
+        </template>
+    </div>
+</template>
